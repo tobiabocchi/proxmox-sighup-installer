@@ -1,0 +1,10 @@
+---
+- name: Install Dependencies
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: Install gpg
+      ansible.builtin.apt:
+        name: gpg
