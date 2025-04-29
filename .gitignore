@@ -44,3 +44,7 @@ k8s/kubeconfig
 # furyctl and ansible directories
 **/.ansible/*
 **/.furyctl/*
+
+# output files
+ansible/hosts
+ansible/hosts.yaml
