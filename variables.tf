@@ -39,13 +39,13 @@ variable "k8s_cluster_name" {
 variable "k8s_cluster_dns_zone" {
   type        = string
   default     = "example.dev"
-  description = "Name of the cluster"
+  description = "DNS zone of the cluster"
 }
 variable "k8s_vm_id" {
   type        = number
   default     = 100
   description = "Base ID for VMs in the cluster"
-}
+} # -- Control Plane ---
 variable "k8s_control_plane_count" {
   type        = number
   default     = 1
@@ -53,7 +53,7 @@ variable "k8s_control_plane_count" {
 }
 variable "k8s_control_plane_memory" {
   type        = number
-  default     = 8192
+  default     = 4096
   description = "Control plane node memory in MB"
 }
 variable "k8s_control_plane_cores" {
@@ -64,8 +64,8 @@ variable "k8s_control_plane_cores" {
 variable "k8s_control_plane_disk_size" {
   type        = number
   default     = 30
-  description = "Control plane disk size in GB"
-}
+  description = "Control plane node disk size in GB"
+} # -- Worker Nodes ---
 variable "k8s_node_count" {
   type        = number
   default     = 3
@@ -73,18 +73,18 @@ variable "k8s_node_count" {
 }
 variable "k8s_node_memory" {
   type        = number
-  default     = 4096
-  description = "Control plane node memory in MB"
+  default     = 8192
+  description = "Worker node memory in MB"
 }
 variable "k8s_node_cores" {
   type        = number
   default     = 4
-  description = "Control plane node CPU cores"
+  description = "Worker node CPU cores"
 }
 variable "k8s_node_disk_size" {
   type        = number
   default     = 50
-  description = "Node disk size in GB"
+  description = "Worker node disk size in GB"
 }
 
 # --- Misc ---
