@@ -4,6 +4,12 @@ resource "terraform_data" "create_out_dir" {
   }
 }
 
+resource "terraform_data" "create_k8s_dir" {
+  provisioner "local-exec" {
+    command = "mkdir -p ${path.module}/k8s"
+  }
+}
+
 resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
@@ -61,6 +67,31 @@ resource "local_file" "cluster_etc_hosts" {
     ]
   })
   filename             = "${path.module}/ansible/hosts"
+  file_permission      = 0644
+  directory_permission = 0755
+}
+
+resource "local_file" "furyctl_yaml" {
+  depends_on = [terraform_data.create_k8s_dir]
+  content = templatefile("${path.module}/templates/furyctl.yaml.tftpl", {
+    control_planes = [
+      for vm in proxmox_vm_qemu.control-plane : {
+        hostname = vm.name
+        ip       = vm.default_ipv4_address
+      }
+    ],
+    nodes = [
+      for vm in proxmox_vm_qemu.node : {
+        hostname = vm.name
+        ip       = vm.default_ipv4_address
+      }
+    ],
+    keypath         = local_file.private_key.filename,
+    cluster_name    = var.k8s_cluster_name,
+    cluster_version = var.k8s_cluster_version,
+    dns_zone        = var.k8s_cluster_dns_zone,
+  })
+  filename             = "${path.module}/k8s/furyctl.yaml"
   file_permission      = 0644
   directory_permission = 0755
 }

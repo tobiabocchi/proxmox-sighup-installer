@@ -38,8 +38,7 @@ terraform.rc
 
 # Keys and certificates
 out/
-k8s/pki/
-k8s/kubeconfig
+k8s/
 
 # furyctl and ansible directories
 **/.ansible/*

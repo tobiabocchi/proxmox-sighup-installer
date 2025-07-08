@@ -36,6 +36,11 @@ variable "k8s_cluster_name" {
   default     = "demo"
   description = "Name of the cluster"
 }
+variable "k8s_cluster_version" {
+  type        = string
+  default     = "v1.32.0"
+  description = "SIGHUP Distribution version"
+}
 variable "k8s_cluster_dns_zone" {
   type        = string
   default     = "example.dev"

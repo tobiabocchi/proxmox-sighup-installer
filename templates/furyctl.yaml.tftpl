@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/sighupio/distribution/${cluster_version}/schemas/public/onpremises-kfd-v1alpha2.json
+---
+apiVersion: kfd.sighup.io/v1alpha2
+kind: OnPremises
+metadata:
+  name: ${cluster_name}
+spec:
+  distributionVersion: ${cluster_version}
+  kubernetes:
+    pkiFolder: ./pki
+    ssh:
+      username: ${cluster_name}
+      keyPath: .${keypath}
+    dnsZone: ${dns_zone}
+    controlPlaneAddress: ${cluster_name}-control-plane-0.example.dev:6443
+    podCidr: 172.16.128.0/17
+    svcCidr: 172.16.0.0/17
+    loadBalancers:
+      enabled: false
+    masters:
+      hosts:
+%{ for host in control_planes ~}
+        - name: ${host.hostname}
+          ip: ${host.ip}
+%{ endfor ~}
+    nodes:
+      - name: worker
+        hosts:
+%{ for host in nodes ~}
+        - name: ${host.hostname}
+          ip: ${host.ip}
+%{ endfor ~}
+  distribution:
+    modules:
+      networking:
+        type: "calico"
+      ingress:
+        baseDomain: internal.example.dev
+        nginx:
+          type: dual
+          tls:
+            provider: certManager
+        certManager:
+          clusterIssuer:
+            name: letsencrypt-fury
+            email: example@sighup.io
+            type: http01
+      logging:
+        type: loki
+      monitoring:
+        type: "prometheus"
+      tracing:
+        type: none
+      policy:
+        type: none
+      dr:
+        type: none
+      auth:
+        provider:
+          type: none
+  plugins:
+    kustomize:
+      - name: storage
+        folder: https://github.com/rancher/local-path-provisioner/deploy?ref=v0.0.31
